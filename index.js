@@ -44,6 +44,12 @@ function Agent(family, major, minor, patch, source) {
 }
 
 
+/**
+ * OnDemand parsing of the Operating System.
+ *
+ * @type {OperatingSystem}
+ * @api public
+ */
 Agent.prototype.setOs = function (os) {
   if (!(os instanceof OperatingSystem)) return false;
   var userAgent = this.source
@@ -74,12 +80,6 @@ Agent.prototype.setOs = function (os) {
     return this.os;
 };
 
-/**
- * OnDemand parsing of the Operating System.
- *
- * @type {OperatingSystem}
- * @api public
- */
 
 
 /**
@@ -221,16 +221,16 @@ Agent.prototype.toVersion = function toVersion() {
  * @returns {String}
  * @api public
  */
-Agent.prototype.toJSON = function toJSON() {
-  return {
-      family: this.family
-    , major: this.major
-    , minor: this.minor
-    , patch: this.patch
-    , device: this.device
-    , os: this.os
-  };
-};
+// Agent.prototype.toJSON = function toJSON() {
+//   return {
+//       family: this.family
+//     , major: this.major
+//     , minor: this.minor
+//     , patch: this.patch
+//     , device: this.device
+//     , os: this.os
+//   };
+// };
 
 /**
  * The representation of a parsed Operating System.
@@ -296,14 +296,14 @@ OperatingSystem.prototype.toVersion = function toVersion() {
  * @returns {String}
  * @api public
  */
-OperatingSystem.prototype.toJSON = function toJSON(){
-  return {
-      family: this.family
-    , major: this.major || undefined
-    , minor: this.minor || undefined
-    , patch: this.patch || undefined
-  };
-};
+// OperatingSystem.prototype.toJSON = function toJSON(){
+//   return {
+//       family: this.family
+//     , major: this.major || undefined
+//     , minor: this.minor || undefined
+//     , patch: this.patch || undefined
+//   };
+// };
 
 /**
  * The representation of a parsed Device.
@@ -383,14 +383,14 @@ Device.prototype.toString = function toString() {
  * @returns {String}
  * @api public
  */
-Device.prototype.toJSON = function toJSON() {
-  return {
-      family: this.family
-    , major: this.major || undefined
-    , minor: this.minor || undefined
-    , patch: this.patch || undefined
-  };
-};
+// Device.prototype.toJSON = function toJSON() {
+//   return {
+//       family: this.family
+//     , major: this.major || undefined
+//     , minor: this.minor || undefined
+//     , patch: this.patch || undefined
+//   };
+// };
 
 
 
@@ -543,7 +543,7 @@ UA.is = function is(useragent) {
  * @type {RegExp}
  * @api private
  */
-UA.is.versionRE = /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/;
+// UA.is.versionRE = /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/;
 
 /**
  * Transform a JSON object back to a valid userAgent string
@@ -551,32 +551,32 @@ UA.is.versionRE = /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/;
  * @param {Object} details
  * @returns {Agent}
  */
-UA.fromJSON = function fromJSON(details) {
-  if (typeof details === 'string') details = JSON.parse(details);
+// UA.fromJSON = function fromJSON(details) {
+//   if (typeof details === 'string') details = JSON.parse(details);
 
-  var agent = new Agent(details.family, details.major, details.minor, details.patch)
-    , os = details.os;
+//   var agent = new Agent(details.family, details.major, details.minor, details.patch)
+//     , os = details.os;
 
-  // The device family was added in v2.0
-  if ('device' in details) {
-    agent.device = new Device(details.device.family);
-  } else {
-    agent.device = new Device();
-  }
+//   // The device family was added in v2.0
+//   if ('device' in details) {
+//     agent.device = new Device(details.device.family);
+//   } else {
+//     agent.device = new Device();
+//   }
 
-  if ('os' in details && os) {
-    // In v1.1.0 we only parsed out the Operating System name, not the full
-    // version which we added in v2.0. To provide backwards compatible we should
-    // we should set the details.os as family
-    if (typeof os === 'string') {
-      agent.os = new OperatingSystem(os);
-    } else {
-      agent.os = new OperatingSystem(os.family, os.major, os.minor, os.patch);
-    }
-  }
+//   if ('os' in details && os) {
+//     // In v1.1.0 we only parsed out the Operating System name, not the full
+//     // version which we added in v2.0. To provide backwards compatible we should
+//     // we should set the details.os as family
+//     if (typeof os === 'string') {
+//       agent.os = new OperatingSystem(os);
+//     } else {
+//       agent.os = new OperatingSystem(os.family, os.major, os.minor, os.patch);
+//     }
+//   }
 
-  return agent;
-};
+//   return agent;
+// };
 
 /**
  * Library version.
@@ -584,4 +584,4 @@ UA.fromJSON = function fromJSON(details) {
  * @type {String}
  * @api public
  */
-UA.version = require('./package.json').version;
+// UA.version = require('./package.json').version;
