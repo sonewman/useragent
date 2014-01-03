@@ -1,5 +1,7 @@
 'use strict';
 
+module.exports = UA;
+
 /**
  * This is where all the magic comes from, specially crafted for `useragent`.
  */
@@ -369,55 +371,8 @@ Device.prototype.toJSON = function toJSON() {
   };
 };
 
-/**
- * Small nifty thick that allows us to download a fresh set regexs from t3h
- * Int3rNetz when we want to. We will be using the compiled version by default
- * but users can opt-in for updates.
- *
- * @param {Boolean} refresh Refresh the dataset from the remote
- * @api public
- */
-module.exports = function updater() {
-  try {
-    require('./lib/update').update(function updating(err, results) {
-      if (err) {
-        console.log('[useragent] Failed to update the parsed due to an error:');
-        console.log('[useragent] '+ (err.message ? err.message : err));
-        return;
-      }
 
-      regexps = results;
 
-      // OperatingSystem parsers:
-      osparsers = regexps.os;
-      osparserslength = osparsers.length;
-
-      // UserAgent parsers:
-      agentparsers = regexps.browser;
-      agentparserslength = agentparsers.length;
-
-      // Device parsers:
-      deviceparsers = regexps.device;
-      deviceparserslength = deviceparsers.length;
-    });
-  } catch (e) {
-    console.error('[useragent] If you want to use automatic updating, please add:');
-    console.error('[useragent]   - request (npm install request --save)');
-    console.error('[useragent]   - yamlparser (npm install yamlparser --save)');
-    console.error('[useragent] To your own package.json');
-  }
-};
-
-// Override the exports with our newly set module.exports
-exports = module.exports;
-
-/**
- * Nao that we have setup all the different classes and configured it we can
- * actually start assembling and exposing everything.
- */
-exports.Device = Device;
-exports.OperatingSystem = OperatingSystem;
-exports.Agent = Agent;
 
 /**
  * Parses the user agent string with the generated parsers from the
@@ -428,7 +383,7 @@ exports.Agent = Agent;
  * @returns {Agent}
  * @api public
  */
-exports.parse = function parse(userAgent, jsAgent) {
+function UA(userAgent, jsAgent) {
   if (!userAgent) return new Agent();
 
   var length = agentparserslength
@@ -480,6 +435,16 @@ exports.parse = function parse(userAgent, jsAgent) {
   );
 };
 
+
+/**
+ * Nao that we have setup all the different classes and configured it we can
+ * actually start assembling and exposing everything.
+ */
+UA.Device = Device;
+UA.OperatingSystem = OperatingSystem;
+UA.Agent = Agent;
+
+
 /**
  * If you are doing a lot of lookups you might want to cache the results of the
  * parsed user agent string instead, in memory.
@@ -491,17 +456,17 @@ exports.parse = function parse(userAgent, jsAgent) {
  * @param {String} userAgent The user agent string
  * @param {String} jsAgent Optional UA from js to detect chrome frame
  * @api public
- */
-var LRU = require('lru-cache')(5000);
-exports.lookup = function lookup(userAgent, jsAgent) {
-  var key = (userAgent || '')+(jsAgent || '')
-    , cached = LRU.get(key);
+//  */
+// var LRU = require('lru-cache')(5000);
+// UA.lookup = function lookup(userAgent, jsAgent) {
+//   var key = (userAgent || '')+(jsAgent || '')
+//     , cached = LRU.get(key);
 
-  if (cached) return cached;
-  LRU.set(key, (cached = exports.parse(userAgent, jsAgent)));
+//   if (cached) return cached;
+//   LRU.set(key, (cached = UA.parse(userAgent, jsAgent)));
 
-  return cached;
-};
+//   return cached;
+// };
 
 /**
  * Does a more inaccurate but more common check for useragents identification.
@@ -512,7 +477,7 @@ exports.lookup = function lookup(userAgent, jsAgent) {
  * @returns {Object} matches
  * @api public
  */
-exports.is = function is(useragent) {
+UA.is = function is(useragent) {
   var ua = (useragent || '').toLowerCase()
     , details = {
         chrome: false
@@ -523,7 +488,7 @@ exports.is = function is(useragent) {
       , opera: false
       , safari: false
       , webkit: false
-      , version: (ua.match(exports.is.versionRE) || [0, "0"])[1]
+      , version: (ua.match(UA.is.versionRE) || [0, "0"])[1]
     };
 
   if (~ua.indexOf('webkit')) {
@@ -557,7 +522,7 @@ exports.is = function is(useragent) {
  * @type {RegExp}
  * @api private
  */
-exports.is.versionRE = /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/;
+UA.is.versionRE = /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/;
 
 /**
  * Transform a JSON object back to a valid userAgent string
@@ -565,7 +530,7 @@ exports.is.versionRE = /.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/;
  * @param {Object} details
  * @returns {Agent}
  */
-exports.fromJSON = function fromJSON(details) {
+UA.fromJSON = function fromJSON(details) {
   if (typeof details === 'string') details = JSON.parse(details);
 
   var agent = new Agent(details.family, details.major, details.minor, details.patch)
@@ -598,4 +563,4 @@ exports.fromJSON = function fromJSON(details) {
  * @type {String}
  * @api public
  */
-exports.version = require('./package.json').version;
+UA.version = require('./package.json').version;

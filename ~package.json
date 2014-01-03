@@ -40,8 +40,10 @@
     "long-stack-traces": "0.1.x",
     "yamlparser": "0.0.x",
     "request": "2.9.x",
-    "semver": "1.0.x"
+    "semver": "1.0.x",
+    "pre-commit": "0.0.x"
   },
+  "pre-commit": ["test", "update"],
   "scripts": {
     "test": "mocha $(find test -name '*.test.js')",
     "qa": "mocha --ui exports $(find test -name '*.qa.js')",
