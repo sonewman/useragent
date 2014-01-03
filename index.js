@@ -39,8 +39,8 @@ function Agent(family, major, minor, patch, source) {
   this.minor = minor || '0';
   this.patch = patch || '0';
   this.source = source || '';
-  this.os = null;
-  this.device = null;
+  this.setOs();
+  this.setDevice();
 }
 
 
