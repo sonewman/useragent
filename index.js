@@ -39,7 +39,40 @@ function Agent(family, major, minor, patch, source) {
   this.minor = minor || '0';
   this.patch = patch || '0';
   this.source = source || '';
+  this.os = null;
+  this.device = null;
 }
+
+
+Agent.prototype.setOs = function (os) {
+  if (!(os instanceof OperatingSystem)) return false;
+  var userAgent = this.source
+    , length = osparserslength
+    , parsers = osparsers
+    , i = 0
+    , parser
+    , res;
+
+  for (; i < length; i++) {
+    if (res = parsers[i][0].exec(userAgent)) {
+      parser = parsers[i];
+
+      if (parser[1]) res[1] = parser[1].replace('$1', res[1]);
+      break;
+    }
+  }
+
+  this.os = !parser || !res
+    ? new OperatingSystem()
+    : new OperatingSystem(
+        res[1]
+      , parser[2] || res[2]
+      , parser[3] || res[3]
+      , parser[4] || res[4]
+    );
+
+    return this.os;
+};
 
 /**
  * OnDemand parsing of the Operating System.
@@ -47,50 +80,7 @@ function Agent(family, major, minor, patch, source) {
  * @type {OperatingSystem}
  * @api public
  */
-Object.defineProperty(Agent.prototype, 'os', {
-  get: function lazyparse() {
-    var userAgent = this.source
-      , length = osparserslength
-      , parsers = osparsers
-      , i = 0
-      , parser
-      , res;
 
-    for (; i < length; i++) {
-      if (res = parsers[i][0].exec(userAgent)) {
-        parser = parsers[i];
-
-        if (parser[1]) res[1] = parser[1].replace('$1', res[1]);
-        break;
-      }
-    }
-
-    return Object.defineProperty(this, 'os', {
-        value: !parser || !res
-          ? new OperatingSystem()
-          : new OperatingSystem(
-                res[1]
-              , parser[2] || res[2]
-              , parser[3] || res[3]
-              , parser[4] || res[4]
-            )
-    }).os;
-  },
-
-  /**
-   * Bypass the OnDemand parsing and set an OperatingSystem instance.
-   *
-   * @param {OperatingSystem} os
-   * @api public
-   */
-  set: function set(os) {
-    if (!(os instanceof OperatingSystem)) return false;
-
-    return Object.defineProperty(this, 'os', {
-      value: os
-    }).os;
-  }
-});
 
 /**
  * OnDemand parsing of the Device type.
@@ -98,50 +88,81 @@ Object.defineProperty(Agent.prototype, 'os', {
  * @type {Device}
  * @api public
  */
-Object.defineProperty(Agent.prototype, 'device', {
-  get: function lazyparse() {
-    var userAgent = this.source
-      , length = deviceparserslength
-      , parsers = deviceparsers
-      , i = 0
-      , parser
-      , res;
 
-    for (; i < length; i++) {
-      if (res = parsers[i][0].exec(userAgent)) {
-        parser = parsers[i];
+Agent.prototype.setDevice = function (device) {
+  if (!(device instanceof Device)) return false;
+  var userAgent = this.source
+    , length = deviceparserslength
+    , parsers = deviceparsers
+    , i = 0
+    , parser
+    , res;
 
-        if (parser[1]) res[1] = parser[1].replace('$1', res[1]);
-        break;
-      }
+  for (; i < length; i++) {
+    if (res = parsers[i][0].exec(userAgent)) {
+      parser = parsers[i];
+
+      if (parser[1]) res[1] = parser[1].replace('$1', res[1]);
+      break;
     }
-
-    return Object.defineProperty(this, 'device', {
-        value: !parser || !res
-          ? new Device()
-          : new Device(
-                res[1]
-              , parser[2] || res[2]
-              , parser[3] || res[3]
-              , parser[4] || res[4]
-            )
-    }).device;
-  },
-
-  /**
-   * Bypass the OnDemand parsing and set an Device instance.
-   *
-   * @param {Device} device
-   * @api public
-   */
-  set: function set(device) {
-    if (!(device instanceof Device)) return false;
-
-    return Object.defineProperty(this, 'device', {
-      value: device
-    }).device;
   }
-});
+
+  this.device = !parser || !res
+    ? new Device()
+    : new Device(
+        res[1]
+      , parser[2] || res[2]
+      , parser[3] || res[3]
+      , parser[4] || res[4]
+    );
+
+  return this.device;
+};
+
+// Object.defineProperty(Agent.prototype, 'device', {
+//   get: function lazyparse() {
+//     var userAgent = this.source
+//       , length = deviceparserslength
+//       , parsers = deviceparsers
+//       , i = 0
+//       , parser
+//       , res;
+
+//     for (; i < length; i++) {
+//       if (res = parsers[i][0].exec(userAgent)) {
+//         parser = parsers[i];
+
+//         if (parser[1]) res[1] = parser[1].replace('$1', res[1]);
+//         break;
+//       }
+//     }
+
+//     return Object.defineProperty(this, 'device', {
+//         value: !parser || !res
+//           ? new Device()
+//           : new Device(
+//                 res[1]
+//               , parser[2] || res[2]
+//               , parser[3] || res[3]
+//               , parser[4] || res[4]
+//             )
+//     }).device;
+//   },
+
+//   /**
+//    * Bypass the OnDemand parsing and set an Device instance.
+//    *
+//    * @param {Device} device
+//    * @api public
+//    */
+//   set: function set(device) {
+//     if (!(device instanceof Device)) return false;
+
+//     return Object.defineProperty(this, 'device', {
+//       value: device
+//     }).device;
+//   }
+// });
 /*** Generates a string output of the parsed user agent.
  *
  * @returns {String}
