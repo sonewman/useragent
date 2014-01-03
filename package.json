@@ -28,11 +28,11 @@
   ],
   "license": {
     "type": "MIT",
-    "url": "https://github.com/3rd-Eden/useragent/blob/master/LICENSE"
+    "url": "https://github.com/sonewman/useragent"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/3rd-Eden/useragent.git"
+    "url": "git://github.com/sonewman/useragent.git"
   },
   "devDependencies": {
     "should": "*",
