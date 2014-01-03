@@ -40,14 +40,12 @@
     "long-stack-traces": "0.1.x",
     "yamlparser": "0.0.x",
     "request": "2.9.x",
-    "semver": "1.0.x"
+    "semver": "1.0.x",
+    "lru-cache": "2.2.x"
   },
   "scripts": {
     "test": "mocha $(find test -name '*.test.js')",
     "qa": "mocha --ui exports $(find test -name '*.qa.js')",
     "update": "node ./bin/update.js"
-  },
-  "dependencies": {
-    "lru-cache": "2.2.x"
   }
 }
